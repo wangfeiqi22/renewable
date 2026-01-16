@@ -1,0 +1,26 @@
+sequenceDiagram
+    participant Deco as 装修工程队
+    participant Prop as 物业
+    participant Sys as 系统平台
+    participant Gov as 城管监管系统
+    participant Driver as 司机
+
+    Note over Deco, Prop: 线下场景
+    Prop->>Deco: 展示专属推广码
+    Deco->>Sys: 扫码创建清运单
+    Sys->>Sys: 绑定物业ID (用于抽佣)
+    Deco->>Sys: 填写废弃物类型/方量
+    Sys-->>Deco: 订单创建成功
+    
+    Note over Sys, Driver: 经过抢单流程(省略)
+    
+    Driver->>Sys: 到达现场，装车拍照
+    Driver->>Sys: 点击"推送清运站/申报"
+    Sys->>Gov: 调用上报接口(位置/方量/照片)
+    Gov-->>Sys: 返回电子联单编号
+    Sys-->>Driver: 显示电子联单
+    Sys-->>Deco: 更新订单状态
+    
+    Driver->>Sys: 运输轨迹实时上报
+    Driver->>Sys: 卸车完成
+    Sys->>Prop: 统计该单佣金

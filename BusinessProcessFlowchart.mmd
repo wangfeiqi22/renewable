@@ -1,0 +1,45 @@
+flowchart TD
+    subgraph User ["下单端 (个体户/装修队/街道/VIP)"]
+        Start((开始)) --> CreateOrder[创建清运单]
+        CreateOrder --> AI_GPS[GPS定位 & AI识别]
+        AI_GPS --> SubmitOrder[提交订单]
+    end
+
+    subgraph System ["平台/系统"]
+        SubmitOrder --> MatchStation{智能匹配清运站}
+        MatchStation -->|匹配成功| PushStation[推送给最近清运站]
+        PushStation --> Timer{5分钟未接?}
+        Timer -->|是| PushNext[推送下一家]
+        PushNext --> PushStation
+        Timer -->|否| StationAccepted[清运站已接单]
+        StationAccepted --> ReleasePool[发布至抢单池]
+    end
+
+    subgraph Station ["清运站"]
+        PushStation --> AcceptOrder[接单]
+        AcceptOrder --> StationAccepted
+    end
+
+    subgraph FleetDriver ["车队/司机"]
+        ReleasePool --> FleetGrab[车队抢单]
+        FleetGrab --> AssignDriver[指派司机]
+        AssignDriver --> DriverExec[司机执行任务]
+        DriverExec --> Arrive[到达产生点]
+        Arrive --> LoadPhoto[装车拍照]
+        LoadPhoto --> PushTicket[推送清运站/申报联单]
+        PushTicket --> MultiCar{是否多车?}
+        MultiCar -->|是| Transport[运输]
+        Transport --> Unload[卸车拍照]
+        Unload --> Return[返回产生点]
+        Return --> LoadPhoto
+        MultiCar -->|否| TransportFinal[运输至清运站]
+    end
+
+    subgraph StationWork ["清运站作业"]
+        TransportFinal --> Inbound[进站识别]
+        Inbound --> Weighing[地磅称重]
+        Weighing --> UnloadFinal[卸车确认]
+        UnloadFinal --> FinishOrder((订单完成))
+    end
+
+    DriverExec -.->|轨迹记录| System

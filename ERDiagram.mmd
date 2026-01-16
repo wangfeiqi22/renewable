@@ -1,0 +1,84 @@
+erDiagram
+    %% 用户体系
+    User ||--o{ Role : has
+    User {
+        string id PK
+        string username
+        string phone
+        string user_type "Individual/Property/Decoration/Street/Station/Fleet/VIP"
+    }
+    
+    %% 清运单体系
+    ClearanceOrder }|--|| User : "creator"
+    ClearanceOrder }|--|| Station : "assigned_to"
+    ClearanceOrder }|--|| Fleet : "grabbed_by"
+    ClearanceOrder }|--|| Driver : "executed_by"
+    ClearanceOrder {
+        string id PK
+        string status "Created/Matched/Accepted/Pool/Grabbed/InTransit/Completed"
+        string waste_type
+        float weight_estimated
+        float weight_actual
+        string location_gps
+        string location_address
+        datetime created_at
+    }
+
+    %% 电子联单
+    ElectronicTicket |o--|| ClearanceOrder : "belongs_to"
+    ElectronicTicket {
+        string id PK
+        string gov_ticket_number
+        string status
+        datetime generated_at
+    }
+
+    %% 角色扩展信息
+    Station ||--|| User : extends
+    Station {
+        string station_name
+        string gps_location
+        json waste_config
+    }
+    
+    Fleet ||--|| User : extends
+    Fleet {
+        string fleet_name
+        string license_no
+    }
+
+    Driver }|--|| Fleet : "belongs_to"
+    Driver {
+        string id PK
+        string name
+        string phone
+        string license_status
+    }
+
+    Vehicle }|--|| Fleet : "owned_by"
+    Vehicle {
+        string plate_number
+        string type
+    }
+
+    Property ||--|| User : extends
+    Property {
+        string property_name
+        string promo_code
+    }
+
+    Commission }|--|| Property : "earns"
+    Commission }|--|| ClearanceOrder : "from"
+    Commission {
+        float amount
+        string status
+    }
+
+    %% 再生资源商城
+    MallProduct }|--|| Station : "sells"
+    MallProduct {
+        string id PK
+        string name
+        float price
+        float stock
+    }

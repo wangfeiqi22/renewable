@@ -1,0 +1,93 @@
+usecaseDiagram
+    %% 角色定义
+    actor "个体户" as Individual
+    actor "物业" as Property
+    actor "装修工程队" as Decoration
+    actor "街道办" as Street
+    actor "清运站" as Station
+    actor "车队" as Fleet
+    actor "VIP客户" as VIP
+    actor "司机" as Driver
+
+    package "智慧垃圾清运系统" {
+        %% 个体户用例
+        usecase "智能下单(GPS/AI识别)" as UC_Individual_Order
+        usecase "扫码投递" as UC_Scan_Drop
+        usecase "积分商城兑换" as UC_Points
+
+        %% 物业用例
+        usecase "多小区管理" as UC_Prop_Multi
+        usecase "推广码分享与抽佣" as UC_Prop_Commission
+        usecase "满溢报警监控" as UC_Prop_Monitor
+        usecase "巡查上报" as UC_Prop_Report
+
+        %% 装修队用例
+        usecase "创建工程清运单" as UC_Deco_Order
+        usecase "扫码绑定物业" as UC_Deco_Bind
+        usecase "电子联单申报" as UC_Deco_Ticket
+
+        %% 街道办用例
+        usecase "数据驾驶舱(全域监管)" as UC_Street_Dashboard
+        usecase "违规预警处理" as UC_Street_Alert
+        usecase "创建街道清运单" as UC_Street_Order
+
+        %% 清运站用例
+        usecase "站点配置(规则/价格)" as UC_Station_Config
+        usecase "智能接单/抢单池发布" as UC_Station_Order
+        usecase "入库计量(地磅对接)" as UC_Station_Weigh
+        usecase "再生资源商城管理" as UC_Station_Mall
+
+        %% 车队用例
+        usecase "运力管理(司机/车辆)" as UC_Fleet_Manage
+        usecase "公海抢单/内部派单" as UC_Fleet_Order
+        usecase "自主下单" as UC_Fleet_SelfOrder
+        usecase "绩效与收入统计" as UC_Fleet_Stat
+
+        %% VIP用例
+        usecase "周期清运配置" as UC_VIP_Cycle
+        usecase "月结对账" as UC_VIP_Bill
+        usecase "ESG报表导出" as UC_VIP_Report
+
+        %% 司机用例
+        usecase "任务执行(装车/拍照/轨迹)" as UC_Driver_Task
+        usecase "电子联单上报" as UC_Driver_Ticket
+        usecase "多车往返作业" as UC_Driver_MultiTrip
+    }
+
+    %% 关系连接
+    Individual --> UC_Individual_Order
+    Individual --> UC_Scan_Drop
+    Individual --> UC_Points
+
+    Property --> UC_Prop_Multi
+    Property --> UC_Prop_Commission
+    Property --> UC_Prop_Monitor
+    Property --> UC_Prop_Report
+
+    Decoration --> UC_Deco_Order
+    Decoration --> UC_Deco_Bind
+    Decoration --> UC_Deco_Ticket
+    UC_Deco_Bind ..> UC_Prop_Commission : 触发抽佣
+
+    Street --> UC_Street_Dashboard
+    Street --> UC_Street_Alert
+    Street --> UC_Street_Order
+
+    Station --> UC_Station_Config
+    Station --> UC_Station_Order
+    Station --> UC_Station_Weigh
+    Station --> UC_Station_Mall
+
+    Fleet --> UC_Fleet_Manage
+    Fleet --> UC_Fleet_Order
+    Fleet --> UC_Fleet_SelfOrder
+    Fleet --> UC_Fleet_Stat
+
+    VIP --> UC_VIP_Cycle
+    VIP --> UC_VIP_Bill
+    VIP --> UC_VIP_Report
+
+    Driver --> UC_Driver_Task
+    Driver --> UC_Driver_Ticket
+    Driver --> UC_Driver_MultiTrip
+    Fleet --> Driver : 管理/派单

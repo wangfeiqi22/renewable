@@ -1,0 +1,39 @@
+stateDiagram-v2
+    [*] --> Created : 用户下单
+    
+    state "智能匹配中" as Matching
+    Created --> Matching : 提交订单
+    
+    state "待接单" as PendingStation
+    Matching --> PendingStation : 匹配到清运站
+    
+    state "超时轮转" as Timeout
+    PendingStation --> Timeout : 5分钟未接
+    Timeout --> PendingStation : 推送下一家
+    
+    state "抢单池" as Pool
+    PendingStation --> Pool : 清运站接单
+    
+    state "待派单" as AssignedFleet
+    Pool --> AssignedFleet : 车队抢单
+    
+    state "待执行" as AssignedDriver
+    AssignedFleet --> AssignedDriver : 指派司机
+    Pool --> AssignedDriver : 司机直接抢单(授权)
+    
+    state "执行中" as InProgress {
+        [*] --> Arrived : 到达现场
+        Arrived --> Loading : 装车拍照
+        Loading --> TicketGen : 申报电子联单
+        TicketGen --> Transporting : 运输中
+        Transporting --> Unloading : 到达清运站卸车
+        Unloading --> [*]
+    }
+    
+    AssignedDriver --> InProgress : 司机出发
+    
+    InProgress --> Completed : 卸车确认完成
+    Completed --> [*]
+    
+    Created --> Cancelled : 用户取消
+    Matching --> Cancelled : 无站点接单
