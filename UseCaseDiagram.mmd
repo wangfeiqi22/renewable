@@ -8,6 +8,8 @@ usecaseDiagram
     actor "车队" as Fleet
     actor "VIP客户" as VIP
     actor "司机" as Driver
+    actor "个人司机" as IndividualDriver
+    actor "车队司机" as FleetDriver
 
     package "智慧垃圾清运系统" {
         %% 个体户用例
@@ -49,12 +51,18 @@ usecaseDiagram
         usecase "ESG报表导出" as UC_VIP_Report
 
         %% 司机用例
+        usecase "注册认证(车队/个人)" as UC_Driver_Register
+        usecase "消息通知(促销/预警)" as UC_Driver_Msg
         usecase "任务执行(装车/拍照/轨迹)" as UC_Driver_Task
         usecase "电子联单上报" as UC_Driver_Ticket
         usecase "多车往返作业" as UC_Driver_MultiTrip
+        usecase "自建清运单(无联单)" as UC_Driver_SelfOrder
     }
 
     %% 关系连接
+    Driver <|-- IndividualDriver
+    Driver <|-- FleetDriver
+
     Individual --> UC_Individual_Order
     Individual --> UC_Scan_Drop
     Individual --> UC_Points
@@ -87,7 +95,14 @@ usecaseDiagram
     VIP --> UC_VIP_Bill
     VIP --> UC_VIP_Report
 
+    Driver --> UC_Driver_Register
+    Driver --> UC_Driver_Msg
     Driver --> UC_Driver_Task
-    Driver --> UC_Driver_Ticket
     Driver --> UC_Driver_MultiTrip
-    Fleet --> Driver : 管理/派单
+    
+    FleetDriver --> UC_Driver_Ticket
+    FleetDriver --> UC_Fleet_Order : 参与公海抢单
+    
+    IndividualDriver --> UC_Driver_SelfOrder
+
+    Fleet --> FleetDriver : 管理/派单
