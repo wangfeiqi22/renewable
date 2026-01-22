@@ -1,8 +1,14 @@
 stateDiagram-v2
     [*] --> Created : 用户下单
+    [*] --> SelfCreated : 司机自建
     
     state "智能匹配中" as Matching
     Created --> Matching : 提交订单
+    
+    state "待审核" as Auditing
+    SelfCreated --> Auditing : 提交审核
+    Auditing --> AssignedDriver : 审核通过
+    Auditing --> Cancelled : 审核驳回
     
     state "待接单" as PendingStation
     Matching --> PendingStation : 匹配到清运站
